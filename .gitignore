@@ -130,3 +130,6 @@ dmypy.json
 
 # Ansible retry files
 *.retry
+
+# Ansible config files
+ansible.cfg
