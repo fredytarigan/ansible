@@ -133,3 +133,6 @@ dmypy.json
 
 # Ansible config files
 ansible.cfg
+
+# Ansible inventories files
+inventories/*
