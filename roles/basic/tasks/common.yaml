@@ -1,0 +1,18 @@
+---
+# task file for basic common
+
+- name: update hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  tags:
+    - always
+    - basic
+    - hostname
+
+- name: update timezone
+  timezone:
+    name: "{{ timezone }}"
+  tags:
+    - always
+    - basic
+    - hostname

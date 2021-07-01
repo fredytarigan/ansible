@@ -1,2 +1,19 @@
 ---
 # defaults file for basic
+
+timezone: Asia/Jakarta
+ntp_servers:
+  - 0.id.pool.ntp.org
+  - 1.id.pool.ntp.org
+  - 2.id.pool.ntp.org
+  - 3.id.pool.ntp.org
+
+# common packages need to be installed
+debian_packages:
+  - htop
+  - net-tools
+  - apt-transport-https
+  - ca-certificates
+  - gnupg
+  - curl
+  - lsb-release

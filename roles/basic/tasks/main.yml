@@ -1,2 +1,22 @@
 ---
 # tasks file for basic
+
+- name: load pre-task roles
+  include_tasks:
+    file: pretask.yaml
+  tags:
+    - always
+
+- name: load common roles for non specific os distribution
+  include_tasks:
+    file: common.yaml
+  tags:
+    - always
+
+- name: load debian specific roles
+  include_tasks:
+    file: debian.yaml
+  when:
+    - ansible_distribution == "Debian"
+  tags:
+    - always
