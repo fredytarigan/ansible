@@ -1,0 +1,45 @@
+---
+# tasks file for basic debian
+
+- name: update all packages
+  apt:
+    upgrade: dist
+    force_apt_get: yes
+  tags:
+    - common
+    - update
+
+- name: install basic tools packages
+  apt:
+    name: "{{ debian_packages }}"
+    state: latest
+  tags:
+    - common
+    - tools
+
+- name: copy timesyncd config
+  template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - common
+    - timesyncd
+
+- name: restart timesyncd
+  systemd:
+    name: systemd-timesyncd
+    state: restarted
+    enabled: yes
+  tags:
+    - common
+    - timesyncd
+
+- name: set timedatectl ntp
+  command: timedatectl set-ntp true
+  changed_when: False
+  tags:
+    - common
+    - timesyncd

@@ -1,0 +1,9 @@
+---
+# # tasks file for basic pretask
+
+- name: make sure dbus is installed
+  package:
+    name: dbus
+    state: latest
+  tags:
+    - always

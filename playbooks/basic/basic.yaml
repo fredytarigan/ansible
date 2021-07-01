@@ -1,0 +1,10 @@
+---
+# Playbook for basic setup
+
+- name: basic setup for servers
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: yes
+  roles:
+    - basic
