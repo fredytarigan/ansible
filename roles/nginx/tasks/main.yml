@@ -25,3 +25,12 @@
   tags:
     - nginx
     - always
+
+- name: enable and start nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+  tags:
+    - nginx
+    - always
