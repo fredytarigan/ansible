@@ -1,0 +1,66 @@
+---
+# tasks file for php-fpm debian
+
+- name: install php-fpm
+  apt:
+    name:
+      - "php{{ php_version }}"
+      - "php{{ php_version }}-fpm"
+      - "php{{ php_version }}-common"
+      - "php{{ php_version }}-mysqlnd"
+      - "php{{ php_version }}-curl"
+      - "php{{ php_version }}-gmp"
+      - "php{{ php_version }}-intl"
+      - "php{{ php_version }}-mbstring"
+      - "php{{ php_version }}-xmlrpc"
+      - "php{{ php_version }}-gd"
+      - "php{{ php_version }}-xml"
+      - "php{{ php_version }}-cli"
+      - "php{{ php_version }}-zip"
+      - "php{{ php_version }}-soap"
+      - "php{{ php_version }}-imap"
+  tags:
+    - install
+    - php-fpm
+
+- name: copy php-fpm config
+  template:
+    src: php-fpm.conf.j2
+    dest: /etc/php/7.3/fpm/php-fpm.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - config
+    - php-fpm
+
+- name: copy php-fpm pool config
+  template:
+    src: www.conf.j2
+    dest: /etc/php/7.3/fpm/pool.d/www.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - config
+    - php-fpm
+
+- name: copy php ini config
+  template:
+    src: php.ini.j2
+    dest: /etc/php/7.3/fpm/php.ini
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - config
+    - php-fpm
+
+- name: restart and enable php-fpm
+  systemd:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+    enabled: yes
+  tags:
+    - config
+    - php-fpm

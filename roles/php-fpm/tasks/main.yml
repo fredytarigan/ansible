@@ -1,0 +1,10 @@
+---
+# tasks file for php-fpm
+
+- name: load debian tasks
+  include_tasks:
+    file: debian.yaml
+  when:
+    - ansible_distribution == "Debian"
+  tags:
+    - always
