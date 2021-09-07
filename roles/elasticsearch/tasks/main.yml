@@ -7,26 +7,28 @@
   tags:
     - always
 
-- name: add elasticsearch apt_key
+- name: add wazuh apt_key
   apt_key:
-    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
     state: present
   tags:
     - elasticsearch
     - prepare
 
-- name: add elasticsearch repository
+- name: add wazuh repository
   apt_repository:
-    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
     state: present
-    filename: elasticsearch
+    filename: wazuh
   tags:
     - elasticsearch
     - prepare
 
 - name: install elasticsearch
   apt:
-    name: elasticsearch={{ elasticsearch_version }}
+    name:
+      - elasticsearch-oss
+      - opendistroforelasticsearch
     state: present
     update_cache: yes
   tags:
@@ -77,6 +79,21 @@
     owner: root
     group: elasticsearch
     mode: 0660
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch roles and users
+  copy:
+    src: files/{{ item }}
+    dest: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/{{ item }}
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  with_items:
+    - roles.yml
+    - roles_mapping.yml
+    - internal_users.yml
   tags:
     - elasticsearch
     - configure

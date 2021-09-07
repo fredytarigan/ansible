@@ -6,6 +6,9 @@
     name: 
       - curl
       - apt-transport-https
+      - unzip
+      - wget
+      - software-properties-common
     state: latest
   tags:
     - elasticsearch
