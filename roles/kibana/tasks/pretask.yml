@@ -6,6 +6,7 @@
     name: 
       - curl
       - apt-transport-https
+      - libcap2-bin
     state: latest
   tags:
     - kibana
@@ -19,6 +20,7 @@
     group: root
     mode: 0755
   with_items:
+    - /usr/share/kibana/data/wazuh/config/
     - /var/lib/kibana
     - /var/log/kibana
   tags:

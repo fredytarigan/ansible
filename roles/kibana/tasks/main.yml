@@ -7,40 +7,40 @@
   tags:
     - always
 
-- name: add elasticsearch apt_key
+- name: add wazuh apt_key
   apt_key:
-    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
     state: present
   tags:
     - kibana
     - prepare
 
-- name: add elasticsearch repository
+- name: add wazuh repository
   apt_repository:
-    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
     state: present
-    filename: elasticsearch
+    filename: wazuh
   tags:
     - kibana
     - prepare
 
 - name: install kibana
   apt:
-    name: kibana={{ kibana_version }}
+    name: opendistroforelasticsearch-kibana
     state: present
     update_cache: yes
   tags:
     - kibana
     - install
 
-- name: install wazuh plugin
-  shell: |
-    sudo -u kibana /usr/share/kibana/bin/kibana-plugin --allow-root install https://packages.wazuh.com/wazuhapp/wazuhapp-3.13.3_7.9.2.zip
-  changed_when: false
-  ignore_errors: yes
-  tags:
-    - kibana
-    - configure
+# - name: install wazuh plugin
+#   shell: |
+#     sudo -u kibana /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/4.x/ui/kibana/wazuh_kibana-4.2.1_7.10.2-1.zip
+#   changed_when: false
+#   ignore_errors: yes
+#   tags:
+#     - kibana
+#     - configure
 
 - name: copy kibana configuration
   template:
@@ -67,7 +67,7 @@
 - name: copy wazuh configuration
   template:
     src: wazuh.yml.j2
-    dest: /usr/share/kibana/optimize/wazuh/config/wazuh.yml
+    dest: /usr/share/kibana/data/wazuh/config/wazuh.yml
     owner: kibana
     group: kibana
     mode: 0750
