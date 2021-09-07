@@ -1,0 +1,156 @@
+---
+# tasks file for wazuh
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add wazuh apt_key
+  apt_key:
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+    state: present
+  tags:
+    - wazuh
+    - prepare
+
+- name: add elasticsearch apt_key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  tags:
+    - wazuh
+    - prepare
+
+- name: add wazuh repository
+  apt_repository:
+    repo: deb https://packages.wazuh.com/3.x/apt/ stable main
+    state: present
+    filename: wazuh
+  tags:
+    - wazuh
+    - prepare
+
+- name: add elasticsearch repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: elasticsearch
+  tags:
+    - wazuh
+    - prepare
+
+- name: install wazuh manager
+  apt:
+    name: wazuh-manager
+    state: present
+    update_cache: yes
+  tags:
+    - wazuh
+    - install
+
+- name: installing nodejs
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+  changed_when: false
+  tags:
+    - wazuh
+    - install
+
+- name: install nodejs
+  apt:
+    name: nodejs
+    state: present
+    update_cache: yes
+  tags:
+    - wazuh
+    - install
+
+- name: install wazuh api
+  apt:
+    name: wazuh-api
+    state: present
+    update_cache: yes
+  tags:
+    - wazuh
+    - install
+
+- name: install filebeat
+  apt:
+    name: filebeat={{ wazuh_filebeat_version }}
+    state: present
+  tags:
+    - wazuh
+    - install
+
+- name: copy filebeat configuration
+  template:
+    src: filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: 0750
+  tags:
+    - wazuh
+    - configure
+
+- name: download alerts template
+  get_url:
+    url: https://raw.githubusercontent.com/wazuh/wazuh/v3.13.3/extensions/elasticsearch/7.x/wazuh-template.json
+    dest: /etc/filebeat/wazuh-template.json
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - wazuh
+    - configure
+
+- name: download wazuh module for filebeat
+  get_url:
+    url: https://packages.wazuh.com/3.x/filebeat/wazuh-filebeat-0.1.tar.gz
+    dest: /tmp/wazuh-filebeat-0.1.tar.gz
+  tags:
+    - wazuh
+    - configure
+
+- name: extract wazuh module for filebeat
+  unarchive:
+    src: /tmp/wazuh-filebeat-0.1.tar.gz
+    dest: /usr/share/filebeat/module/
+    remote_src: yes
+  tags:
+    - wazuh
+    - configure
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: enable and restart wazuh manager
+  systemd:
+    name: wazuh-manager
+    state: restarted
+    enabled: yes
+  tags:
+    - wazuh
+    - systemd
+
+- name: enable and restart wazuh api
+  systemd:
+    name: wazuh-api
+    state: restarted
+    enabled: yes
+  tags:
+    - wazuh
+    - systemd
+
+- name: enable and restart filebeat
+  systemd:
+    name: filebeat
+    state: restarted
+    enabled: yes
+  tags:
+    - wazuh
+    - systemd
