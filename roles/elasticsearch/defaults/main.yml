@@ -1,0 +1,8 @@
+---
+# defaults file for elasticsearch
+
+elasticsearch_version: 7.14.1
+elasticsearch_limit_nofile: 65535
+
+elasticsearch_xms: 1g
+elasticsearch_xmx: 1g

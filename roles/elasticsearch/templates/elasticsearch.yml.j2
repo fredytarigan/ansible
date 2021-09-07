@@ -1,0 +1,12 @@
+cluster.name: {{ elasticsearch_cluster_name }}
+node.name: {{ ansible_hostname }}
+
+#node.attr.rack: r1
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+bootstrap.memory_lock: true
+network.host: {{ ansible_host }}
+http.port: 9200
+#discovery.seed_hosts: ["host1", "host2"]
+cluster.initial_master_nodes: ["{{ ansible_hostname }}"]
+#action.destructive_requires_name: true

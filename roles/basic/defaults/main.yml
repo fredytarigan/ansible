@@ -17,3 +17,5 @@ debian_packages:
   - gnupg
   - curl
   - lsb-release
+
+ulimit: 150000

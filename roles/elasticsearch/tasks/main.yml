@@ -1,0 +1,82 @@
+---
+# tasks file for elasticsearch
+
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add elasticsearch apt_key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  tags:
+    - elasticsearch
+    - prepare
+
+- name: add elasticsearch repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: elasticsearch
+  tags:
+    - elasticsearch
+    - prepare
+
+- name: install elasticsearch
+  apt:
+    name: elasticsearch={{ elasticsearch_version }}
+    state: present
+    update_cache: yes
+  tags:
+    - elasticsearch
+    - install
+
+- name: copy elasticsearch config file
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch systemd file
+  copy:
+    src: files/elasticsearch.conf
+    dest: /etc/systemd/system/elasticsearch.service.d/elasticsearch.conf
+    owner: root
+    group: elasticsearch
+    mode: 0755
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch jvm options
+  template:
+    src: jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options.d/{{ ansible_hostname }}.options
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  tags:
+    - elasticsearch
+    - configure
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: restart and enable elasticsearch
+  systemd:
+    name: elasticsearch
+    state: restarted
+    enabled: yes
+  tags:
+    - elasticsearch
+    - systemd
