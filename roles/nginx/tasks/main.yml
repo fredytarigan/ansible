@@ -1,0 +1,36 @@
+---
+# tasks file for nginx
+
+- name: load debian tasks
+  include_tasks:
+    file: debian.yaml
+  tags:
+    - always
+
+- name: delete default nginx conf file
+  file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+  tags:
+    - nginx
+    - always
+
+- name: copy nginx.conf file
+  copy:
+    src: files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - nginx
+    - always
+
+- name: enable and start nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+  tags:
+    - nginx
+    - always
