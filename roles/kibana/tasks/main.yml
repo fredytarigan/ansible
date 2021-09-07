@@ -64,6 +64,17 @@
     - kibana
     - configure
 
+- name: copy wazuh configuration
+  template:
+    src: wazuh.yml.j2
+    dest: /usr/share/kibana/optimize/wazuh/config/wazuh.yml
+    owner: kibana
+    group: kibana
+    mode: 0750
+  tags:
+    - kibana
+    - configure
+
 - name: change owner and group of several directory
   file:
     path: "{{ item }}"

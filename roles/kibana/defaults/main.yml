@@ -4,3 +4,7 @@
 kibana_version: 7.9.2
 kibana_server_name: kibana
 kibana_elasticsearch_host: http://127.0.0.1:9200
+kibana_wazuh_api_host: http://127.0.0.1
+kibana_wazuh_api_port: 55000
+kibana_wazuh_api_username: foo
+kibana_wazuh_api_password: bar
