@@ -32,35 +32,35 @@
     - wazuh
     - install
 
-- name: installing nodejs
-  shell: |
-    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-  changed_when: false
-  tags:
-    - wazuh
-    - install
+# - name: installing nodejs
+#   shell: |
+#     curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+#   changed_when: false
+#   tags:
+#     - wazuh
+#     - install
 
-- name: install nodejs
-  apt:
-    name: nodejs
-    state: present
-    update_cache: yes
-  tags:
-    - wazuh
-    - install
+# - name: install nodejs
+#   apt:
+#     name: nodejs
+#     state: present
+#     update_cache: yes
+#   tags:
+#     - wazuh
+#     - install
 
-- name: install wazuh api
-  apt:
-    name: wazuh-api
-    state: present
-    update_cache: yes
-  tags:
-    - wazuh
-    - install
+# - name: install wazuh api
+#   apt:
+#     name: wazuh-api
+#     state: present
+#     update_cache: yes
+#   tags:
+#     - wazuh
+#     - install
 
 - name: install filebeat
   apt:
-    name: filebeat={{ wazuh_filebeat_version }}
+    name: filebeat
     state: present
   tags:
     - wazuh
@@ -79,7 +79,7 @@
 
 - name: download alerts template
   get_url:
-    url: https://raw.githubusercontent.com/wazuh/wazuh/v3.13.3/extensions/elasticsearch/7.x/wazuh-template.json
+    url: https://raw.githubusercontent.com/wazuh/wazuh/4.2/extensions/elasticsearch/7.x/wazuh-template.json
     dest: /etc/filebeat/wazuh-template.json
     owner: root
     group: root
@@ -90,7 +90,7 @@
 
 - name: download wazuh module for filebeat
   get_url:
-    url: https://packages.wazuh.com/3.x/filebeat/wazuh-filebeat-0.1.tar.gz
+    url: https://packages.wazuh.com/4.x/filebeat/wazuh-filebeat-0.1.tar.gz
     dest: /tmp/wazuh-filebeat-0.1.tar.gz
   tags:
     - wazuh
@@ -120,14 +120,14 @@
     - wazuh
     - systemd
 
-- name: enable and restart wazuh api
-  systemd:
-    name: wazuh-api
-    state: restarted
-    enabled: yes
-  tags:
-    - wazuh
-    - systemd
+# - name: enable and restart wazuh api
+#   systemd:
+#     name: wazuh-api
+#     state: restarted
+#     enabled: yes
+#   tags:
+#     - wazuh
+#     - systemd
 
 - name: enable and restart filebeat
   systemd:
