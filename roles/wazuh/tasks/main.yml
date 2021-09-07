@@ -14,28 +14,11 @@
     - wazuh
     - prepare
 
-- name: add elasticsearch apt_key
-  apt_key:
-    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-    state: present
-  tags:
-    - wazuh
-    - prepare
-
 - name: add wazuh repository
   apt_repository:
-    repo: deb https://packages.wazuh.com/3.x/apt/ stable main
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
     state: present
     filename: wazuh
-  tags:
-    - wazuh
-    - prepare
-
-- name: add elasticsearch repository
-  apt_repository:
-    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
-    state: present
-    filename: elasticsearch
   tags:
     - wazuh
     - prepare
