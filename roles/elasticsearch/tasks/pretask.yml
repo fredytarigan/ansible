@@ -10,18 +10,3 @@
   tags:
     - elasticsearch
     - prepare
-
-- name: create required directory
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: elasticsearch
-    group: elasticsearch
-    mode: 0755
-  with_items:
-    - /etc/systemd/system/elasticsearch.service.d
-    - /var/lib/elasticsearch
-    - /var/log/elasticsearch
-  tags:
-    - elasticsearch
-    - prepare
