@@ -1,0 +1,83 @@
+---
+# tasks file for kibana
+
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add elasticsearch apt_key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  tags:
+    - kibana
+    - prepare
+
+- name: add elasticsearch repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: elasticsearch
+  tags:
+    - kibana
+    - prepare
+
+- name: install kibana
+  apt:
+    name: kibana={{ kibana_version }}
+    state: present
+    update_cache: yes
+  tags:
+    - kibana
+    - install
+
+- name: change owner and group of several directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: kibana
+    group: kibana
+    mode: 0755
+  with_items:
+    - /usr/share/kibana/optimize
+    - /usr/share/kibana/plugins
+  tags:
+    - kibana
+    - configure
+
+- name: install wazuh plugin
+  shell: |
+    /usr/share/kibana/bin/kibana-plugin --allow-root install https://packages.wazuh.com/wazuhapp/wazuhapp-3.13.3_7.9.2.zip
+  changed_when: false
+  tags:
+    - kibana
+    - configure
+
+- name: copy kibana configuration
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: kibana
+    group: kibana
+    mode: 0755
+  tags:
+    - kibana
+    - configure
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: enable and restart kibana
+  systemd:
+    name: kibana
+    state: restarted
+    enabled: yes
+  tags:
+    - kibana
+    - systemd
+

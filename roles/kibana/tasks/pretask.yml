@@ -1,0 +1,26 @@
+---
+# pretasks file for kibana
+
+- name: make sure to install all dependencies
+  apt:
+    name: 
+      - curl
+      - apt-transport-https
+    state: latest
+  tags:
+    - kibana
+    - prepare
+
+- name: create required directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - /var/lib/kibana
+    - /var/log/kibana
+  tags:
+    - kibana
+    - prepare
