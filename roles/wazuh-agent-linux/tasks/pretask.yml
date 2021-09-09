@@ -1,0 +1,18 @@
+---
+# pretasks file for wazuh agent linux
+
+- name: install all required packages
+  apt:
+    name:
+      - curl
+      - apt-transport-https
+      - lsb-release
+      - unzip
+      - wget
+      - gnupg2
+      - software-properties-common
+      - auditd
+    state: latest
+  tags:
+    - wazuh
+    - always
