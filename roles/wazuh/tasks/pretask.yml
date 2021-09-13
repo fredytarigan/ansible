@@ -1,0 +1,17 @@
+---
+# pretasks file for wazuh
+
+- name: install all required packages
+  apt:
+    name:
+      - curl
+      - apt-transport-https
+      - lsb-release
+      - unzip
+      - wget
+      - gnupg2
+      - software-properties-common
+    state: latest
+  tags:
+    - wazuh
+    - always

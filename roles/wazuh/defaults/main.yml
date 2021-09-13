@@ -1,0 +1,6 @@
+---
+# defaults file for wazuh
+
+wazuh_filebeat_version: 7.9.2
+wazuh_elasticsearch_host: http://127.0.0.1:9200
+wazuh_elasticsearch_password: ""
