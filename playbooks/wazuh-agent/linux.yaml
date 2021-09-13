@@ -1,0 +1,10 @@
+---
+# Playbook for wazuh linux client setup
+
+- name: wazuh linux client setup for servers
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: yes
+  roles:
+    - wazuh-agent-linux

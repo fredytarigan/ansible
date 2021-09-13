@@ -1,0 +1,3 @@
+---
+# defaults file for wazuh_agent_linux
+wazuh_agent_wazuh_manager: 127.0.0.1

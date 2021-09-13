@@ -1,0 +1,50 @@
+---
+# tasks file for wazuh_agent_linux
+
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add wazuh apt_key
+  apt_key:
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+    state: present
+  tags:
+    - wazuh
+    - prepare
+
+- name: add wazuh repository
+  apt_repository:
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
+    state: present
+    filename: wazuh
+  tags:
+    - wazuh
+    - prepare
+
+- name: install wazuh agent
+  apt:
+    name: wazuh-agent
+    state: present
+  environment:
+    WAZUH_MANAGER: "{{ wazuh_agent_wazuh_manager }}"
+  tags:
+    - wazuh
+    - install
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: enable and restart wazuh agent
+  systemd:
+    name: wazuh-agent
+    state: restarted
+    enabled: yes
+  tags:
+    - wazuh
+    - systemd
