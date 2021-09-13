@@ -1,0 +1,10 @@
+---
+# Playbook for kibana setup
+
+- name: kibana setup for servers
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: yes
+  roles:
+    - kibana

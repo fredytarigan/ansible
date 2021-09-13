@@ -1,0 +1,37 @@
+server.port: 5601
+server.host: "{{ ansible_host }}"
+#server.basePath: ""
+#server.rewriteBasePath: false
+#server.maxPayloadBytes: 1048576
+server.name: "{{ kibana_server_name }}"
+elasticsearch.hosts: ["{{ kibana_elasticsearch_host }}"]
+#elasticsearch.preserveHost: true
+#kibana.index: ".kibana"
+#kibana.defaultAppId: "home"
+elasticsearch.username: "{{ kibana_elasticsearch_username }}"
+elasticsearch.password: "{{ kibana_elasticsearch_password }}"
+server.ssl.enabled: true
+server.ssl.key: "/etc/kibana/certs/kibana.key"
+server.ssl.certificate: "/etc/kibana/certs/kibana.crt"
+#elasticsearch.ssl.certificate: /path/to/your/client.crt
+#elasticsearch.ssl.key: /path/to/your/client.key
+elasticsearch.ssl.certificateAuthorities: ["/etc/kibana/certs/ca.crt"]
+elasticsearch.ssl.verificationMode: certificate
+#elasticsearch.pingTimeout: 1500
+#elasticsearch.requestTimeout: 30000
+elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+#elasticsearch.customHeaders: {}
+#elasticsearch.shardTimeout: 30000
+#elasticsearch.startupTimeout: 5000
+#elasticsearch.logQueries: false
+pid.file: /var/lib/kibana/kibana.pid
+logging.dest: stdout
+logging.silent: false
+logging.quiet: false
+logging.verbose: false
+#ops.interval: 5000
+#i18n.locale: "en"
+server.defaultRoute: /app/wazuh?security_tenant=global
+opendistro_security.multitenancy.enabled: true
+opendistro_security.readonly_mode.roles: ["kibana_read_only"]
+path.data: /var/lib/kibana

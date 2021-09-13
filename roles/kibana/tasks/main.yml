@@ -1,0 +1,108 @@
+---
+# tasks file for kibana
+
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add wazuh apt_key
+  apt_key:
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+    state: present
+  tags:
+    - kibana
+    - prepare
+
+- name: add wazuh repository
+  apt_repository:
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
+    state: present
+    filename: wazuh
+  tags:
+    - kibana
+    - prepare
+
+- name: install kibana
+  apt:
+    name: opendistroforelasticsearch-kibana
+    state: present
+    update_cache: yes
+  tags:
+    - kibana
+    - install
+
+# - name: install wazuh plugin
+#   shell: |
+#     sudo -u kibana /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/4.x/ui/kibana/wazuh_kibana-4.2.1_7.10.2-1.zip
+#   changed_when: false
+#   ignore_errors: yes
+#   tags:
+#     - kibana
+#     - configure
+
+- name: copy kibana configuration
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: kibana
+    group: kibana
+    mode: 0755
+  tags:
+    - kibana
+    - configure
+
+- name: copy kibana default options
+  copy:
+    src: files/kibana
+    dest: /etc/default/kibana
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - kibana
+    - configure
+
+- name: copy wazuh configuration
+  template:
+    src: wazuh.yml.j2
+    dest: /usr/share/kibana/data/wazuh/config/wazuh.yml
+    owner: kibana
+    group: kibana
+    mode: 0750
+  tags:
+    - kibana
+    - configure
+
+- name: change owner and group of several directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: kibana
+    group: kibana
+    mode: 0755
+    recurse: yes
+  with_items:
+    - /usr/share/kibana
+    - /var/log/kibana
+    - /var/lib/kibana
+  tags:
+    - kibana
+    - configure
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: enable and restart kibana
+  systemd:
+    name: kibana
+    state: restarted
+    enabled: yes
+  tags:
+    - kibana
+    - systemd
+
