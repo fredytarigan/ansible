@@ -1,0 +1,15 @@
+---
+# pretasks file for elasticsearch
+
+- name: make sure to install all dependencies
+  apt:
+    name: 
+      - curl
+      - apt-transport-https
+      - unzip
+      - wget
+      - software-properties-common
+    state: latest
+  tags:
+    - elasticsearch
+    - prepare

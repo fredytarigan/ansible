@@ -1,0 +1,114 @@
+---
+# tasks file for elasticsearch
+
+- name: include pretask file
+  include_tasks:
+    file: pretask.yml
+  tags:
+    - always
+
+- name: add wazuh apt_key
+  apt_key:
+    url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+    state: present
+  tags:
+    - elasticsearch
+    - prepare
+
+- name: add wazuh repository
+  apt_repository:
+    repo: deb https://packages.wazuh.com/4.x/apt/ stable main
+    state: present
+    filename: wazuh
+  tags:
+    - elasticsearch
+    - prepare
+
+- name: install elasticsearch
+  apt:
+    name:
+      - elasticsearch-oss
+      - opendistroforelasticsearch
+    state: present
+    update_cache: yes
+  tags:
+    - elasticsearch
+    - install
+
+- name: create required directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+    mode: 0755
+  with_items:
+    - /etc/systemd/system/elasticsearch.service.d
+    - /var/lib/elasticsearch
+    - /var/log/elasticsearch
+  tags:
+    - elasticsearch
+    - prepare
+
+- name: copy elasticsearch config file
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch systemd file
+  copy:
+    src: files/elasticsearch.conf
+    dest: /etc/systemd/system/elasticsearch.service.d/elasticsearch.conf
+    owner: root
+    group: elasticsearch
+    mode: 0755
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch jvm options
+  template:
+    src: jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options.d/{{ ansible_hostname }}.options
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  tags:
+    - elasticsearch
+    - configure
+
+- name: copy elasticsearch roles and users
+  copy:
+    src: files/{{ item }}
+    dest: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/{{ item }}
+    owner: root
+    group: elasticsearch
+    mode: 0660
+  with_items:
+    - roles.yml
+    - roles_mapping.yml
+    - internal_users.yml
+  tags:
+    - elasticsearch
+    - configure
+
+- name: do daemon reload
+  systemd:
+    daemon_reload: yes
+  tags:
+    - always
+
+- name: restart and enable elasticsearch
+  systemd:
+    name: elasticsearch
+    state: restarted
+    enabled: yes
+  tags:
+    - elasticsearch
+    - systemd

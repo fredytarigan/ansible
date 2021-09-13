@@ -1,0 +1,10 @@
+---
+# Playbook for elasticsearch single node setup
+
+- name: elasticsearch single node setup for server
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: yes
+  roles:
+    - elasticsearch

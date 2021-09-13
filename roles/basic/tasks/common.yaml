@@ -16,3 +16,31 @@
     - always
     - basic
     - hostname
+
+- name: update ulimit
+  sysctl:
+    name: fs.file-max
+    value: "{{ ulimit }}"
+    state: present
+    reload: yes
+    sysctl_set: yes
+  tags:
+    - prepare
+    - basic
+    - limit
+
+- name: configure pam limits on machine
+  pam_limits:
+    domain: root
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ ulimit }}"
+  loop:
+    - { limit_type: 'soft', limit_item: 'nofile' }
+    - { limit_type: 'hard', limit_item: 'nofile' }
+    - { limit_type: 'soft', limit_item: 'nproc' }
+    - { limit_type: 'hard', limit_item: 'nproc' }
+  tags:
+    - prepare
+    - basic
+    - limit
